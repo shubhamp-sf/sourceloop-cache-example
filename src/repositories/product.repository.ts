@@ -1,5 +1,5 @@
 import {Constructor, Getter, inject} from '@loopback/core';
-import {DefaultCrudRepository} from '@loopback/repository';
+import {SequelizeCrudRepository} from '@loopback/sequelize';
 import {CacheManager} from '@sourceloop/cache';
 import {PgsqlDataSource, RedisDataSource} from '../datasources';
 import {Product, ProductRelations} from '../models';
@@ -9,13 +9,13 @@ export class ProductRepository extends CacheManager.CacheRepositoryMixin<
   typeof Product.prototype.id,
   ProductRelations,
   Constructor<
-    DefaultCrudRepository<
+    SequelizeCrudRepository<
       Product,
       typeof Product.prototype.id,
       ProductRelations
     >
   >
->(DefaultCrudRepository, {
+>(SequelizeCrudRepository, {
   prefix: 'products',
   ttl: 60000, // 1 min
 }) {

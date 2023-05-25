@@ -1,14 +1,29 @@
-import {inject} from '@loopback/core';
+import {Constructor, Getter, inject} from '@loopback/core';
 import {DefaultCrudRepository} from '@loopback/repository';
-import {PgsqlDataSource} from '../datasources';
+import {CacheManager} from '@sourceloop/cache';
+import {PgsqlDataSource, RedisDataSource} from '../datasources';
 import {Product, ProductRelations} from '../models';
 
-export class ProductRepository extends DefaultCrudRepository<
+export class ProductRepository extends CacheManager.CacheRepositoryMixin<
   Product,
   typeof Product.prototype.id,
-  ProductRelations
-> {
-  constructor(@inject('datasources.pgsql') dataSource: PgsqlDataSource) {
+  ProductRelations,
+  Constructor<
+    DefaultCrudRepository<
+      Product,
+      typeof Product.prototype.id,
+      ProductRelations
+    >
+  >
+>(DefaultCrudRepository, {
+  prefix: 'products',
+  ttl: 60000, // 1 min
+}) {
+  constructor(
+    @inject('datasources.pgsql') dataSource: PgsqlDataSource,
+    @inject.getter('datasources.redis')
+    public getCacheDataSource: Getter<RedisDataSource>,
+  ) {
     super(Product, dataSource);
   }
 }

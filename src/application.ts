@@ -1,12 +1,13 @@
 import {BootMixin} from '@loopback/boot';
 import {ApplicationConfig} from '@loopback/core';
+import {RepositoryMixin} from '@loopback/repository';
+import {RestApplication} from '@loopback/rest';
 import {
   RestExplorerBindings,
   RestExplorerComponent,
 } from '@loopback/rest-explorer';
-import {RepositoryMixin} from '@loopback/repository';
-import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
+import {CachePluginComponent} from '@sourceloop/cache';
 import path from 'path';
 import {MySequence} from './sequence';
 
@@ -29,6 +30,13 @@ export class SourceloopCacheExampleApplication extends BootMixin(
       path: '/explorer',
     });
     this.component(RestExplorerComponent);
+
+    // const opts: CachePluginComponentOptions = {
+    //   cacheProvider: CacheStrategyTypes.Redis,
+    //   prefix: process.env.CACHE_PREFIX ?? DEFAULT_CACHE_PLUGIN_OPTIONS.prefix,
+    // };
+    // this.configure(CachePluginComponentBindings.COMPONENT).to(opts);
+    this.component(CachePluginComponent);
 
     this.projectRoot = __dirname;
     // Customize @loopback/boot Booter Conventions here
